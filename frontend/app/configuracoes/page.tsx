@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { 
   Home, 
   Grid, 
@@ -17,7 +18,8 @@ import {
   Moon,
   Trash2,
   Plus,
-  Minus
+  Minus,
+  ArrowLeft
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -33,21 +35,22 @@ export default function Configuracoes() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex font-sans relative">
       
-      {/* 1. SIDEBAR LATERAL INTERLIGADA */}
       <aside className="w-64 bg-white border-r border-slate-100 p-6 flex flex-col justify-between min-h-screen shadow-sm">
         <div className="flex flex-col gap-8">
           
-          {/* Logo C.A.S.A */}
-          <div className="flex items-center gap-3 px-2">
-            <div className="w-10 h-10 rounded-2xl bg-[#5F7DE3]/10 flex items-center justify-center text-[#5F7DE3] font-bold text-lg border border-[#5F7DE3]/20">
-              🏠
-            </div>
-            <div className="flex flex-col">
-              <span className="font-extrabold text-lg text-slate-900 tracking-tight leading-tight">C.A.S.A</span>
+          <div className="flex justify-center w-full px-2">
+            <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
+              <Image 
+                src="/logo.png" 
+                alt="Logo C.A.S.A" 
+                width={96} 
+                height={96} 
+                className="object-contain"
+                priority 
+              />
             </div>
           </div>
 
-          {/* Menu de Navegação Interligado */}
           <nav className="flex flex-col gap-2">
             <Link 
               href="/dashboard"
@@ -65,10 +68,13 @@ export default function Configuracoes() {
               Categorias
             </Link>
 
-            <button className="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50 hover:text-[#5F7DE3] font-medium text-sm transition-all cursor-pointer text-left">
+            <Link 
+              href="/desempenho"
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50 hover:text-[#5F7DE3] font-medium text-sm transition-all cursor-pointer"
+            >
               <BarChart2 className="w-5 h-5" />
               Desempenho
-            </button>
+            </Link>
 
             <Link 
               href="/historico"
@@ -88,7 +94,6 @@ export default function Configuracoes() {
           </nav>
         </div>
 
-        {/* Perfil & Desconectar */}
         <div className="flex flex-col gap-3 pt-6 border-t border-slate-100">
           <div className="flex items-center justify-between p-2 rounded-2xl bg-slate-50 border border-slate-100">
             <div className="flex items-center gap-3">
@@ -109,11 +114,17 @@ export default function Configuracoes() {
         </div>
       </aside>
 
-      {/* 2. CONTEÚDO PRINCIPAL */}
       <main className="flex-1 p-8 flex flex-col gap-6 max-w-5xl mx-auto relative">
         
-        {/* Sininho de Notificação */}
-        <div className="flex justify-end items-center">
+        <div className="flex justify-between items-center">
+          <Link 
+            href="/dashboard"
+            className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white border border-slate-100 text-slate-600 hover:text-[#5F7DE3] font-medium text-xs transition-all shadow-xs cursor-pointer"
+          >
+            <ArrowLeft className="w-4 h-4 text-[#5F7DE3]" />
+            <span>Voltar ao Dashboard</span>
+          </Link>
+
           <button 
             onClick={() => setShowNotificationsModal(!showNotificationsModal)}
             className="p-2.5 rounded-2xl bg-white border border-slate-100 text-[#5F7DE3] hover:bg-slate-50 transition-all shadow-sm relative cursor-pointer"
@@ -123,7 +134,6 @@ export default function Configuracoes() {
           </button>
         </div>
 
-        {/* Banner Configurações */}
         <section 
           className="w-full h-28 rounded-3xl p-8 flex items-center justify-center text-white shadow-lg relative overflow-hidden text-center"
           style={{
@@ -133,10 +143,8 @@ export default function Configuracoes() {
           <h1 className="text-3xl font-extrabold drop-shadow-sm">Configurações</h1>
         </section>
 
-        {/* Grid de Opções */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4 items-start">
           
-          {/* SISTEMA */}
           <div className="flex flex-col gap-3">
             <h2 className="text-center font-bold text-slate-600 text-sm">Sistema</h2>
 
@@ -189,7 +197,6 @@ export default function Configuracoes() {
             </div>
           </div>
 
-          {/* ACESSIBILIDADE E CONTA */}
           <div className="flex flex-col gap-6">
             
             <div className="flex flex-col gap-3">
@@ -265,7 +272,6 @@ export default function Configuracoes() {
 
         </div>
 
-        {/* MODAL NOTIFICAÇÕES */}
         {showNotificationsModal && (
           <div className="absolute top-20 right-8 w-80 bg-[#F3EFF5] rounded-3xl p-6 shadow-2xl border border-indigo-100 z-50 animate-in fade-in zoom-in duration-200">
             <div className="flex justify-between items-center mb-6">

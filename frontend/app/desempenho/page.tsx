@@ -12,32 +12,41 @@ import {
   LogOut,
   ChevronDown,
   X,
-  Search,
   Filter,
+  Download,
   ArrowLeft
 } from 'lucide-react';
 import Link from 'next/link';
+import { 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer 
+} from 'recharts';
 
-export default function Historico() {
+export default function Desempenho() {
   const [showNotifications, setShowNotifications] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
 
-  const [maisAcionados] = useState([
-    { id: 1, nome: 'Teco', detalhe: '1 VEZ - Agora' },
-    { id: 2, nome: 'Água', detalhe: '1 VEZ - Agora' },
-    { id: 3, nome: 'Banheiro', detalhe: '1 VEZ - Agora' },
-  ]);
-
-  const [menosAcionados] = useState([
-    { id: 1, nome: 'Música', detalhe: '1 VEZ - Agora' },
-  ]);
+  const data = [
+    { name: '0', valor: 200 },
+    { name: '2', valor: 350 },
+    { name: '4', valor: 380 },
+    { name: '6', valor: 420 },
+    { name: '8', valor: 750 },
+    { name: '10', valor: 500 },
+    { name: '12', valor: 550 },
+    { name: '14', valor: 320 },
+  ];
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex font-sans relative">
-
+      
       <aside className="w-64 bg-white border-r border-slate-100 p-6 flex flex-col justify-between min-h-screen shadow-sm">
         <div className="flex flex-col gap-8">
-
+          
           <div className="flex justify-center w-full px-2">
             <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
               <Image 
@@ -70,7 +79,7 @@ export default function Historico() {
 
             <Link 
               href="/desempenho"
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50 hover:text-[#5F7DE3] font-medium text-sm transition-all cursor-pointer"
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-[#5F7DE3] text-white font-medium text-sm shadow-md shadow-[#5F7DE3]/25 transition-all cursor-pointer"
             >
               <BarChart2 className="w-5 h-5" />
               Desempenho
@@ -78,7 +87,7 @@ export default function Historico() {
 
             <Link 
               href="/historico"
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-[#5F7DE3] text-white font-medium text-sm shadow-md shadow-[#5F7DE3]/25 transition-all cursor-pointer"
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50 hover:text-[#5F7DE3] font-medium text-sm transition-all cursor-pointer"
             >
               <History className="w-5 h-5" />
               Histórico
@@ -114,8 +123,8 @@ export default function Historico() {
         </div>
       </aside>
 
-      <main className="flex-1 p-8 flex flex-col gap-6 max-w-6xl mx-auto relative">
-
+      <main className="flex-1 p-8 flex flex-col gap-6 max-w-5xl mx-auto relative">
+        
         <div className="flex justify-between items-center">
           <Link 
             href="/dashboard"
@@ -140,93 +149,64 @@ export default function Historico() {
             background: 'linear-gradient(90deg, #F5AC46 0%, #6586F3 52%, #4D66B8 88%, #3B4E8D 100%)'
           }}
         >
-          <h1 className="text-3xl font-extrabold drop-shadow-sm">Histórico</h1>
+          <h1 className="text-3xl font-extrabold drop-shadow-sm">Desempenho</h1>
         </section>
 
         <p className="text-center text-slate-400 text-xs max-w-md mx-auto leading-relaxed font-medium">
-          Histórico de Botões mais ou menos acionados
+          Desempenho Geral em relação aos botões mais e menos acionados pelo dispositivo
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-2">
-          <div className="flex items-center gap-3 w-full sm:w-auto flex-1">
-            <div className="relative">
-              <select className="appearance-none bg-white border border-slate-200 rounded-2xl px-10 py-3 text-xs font-medium text-slate-500 pr-10 cursor-pointer focus:outline-none shadow-xs">
-                <option value="">Filtrar por</option>
-                <option value="recentes">Mais recentes</option>
-                <option value="az">A-Z</option>
-              </select>
-              <Filter className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5 pointer-events-none" />
-              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
-            </div>
-
-            <div className="relative flex-1 max-w-md">
-              <input 
-                type="text" 
-                placeholder="Busque por um botão"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-2xl pl-10 pr-4 py-3 text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none shadow-xs"
-              />
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5 pointer-events-none" />
-            </div>
-
-            <button className="px-6 py-3 bg-[#8FA1D0] hover:bg-[#7e92c5] text-white text-xs font-semibold rounded-2xl transition-all cursor-pointer shadow-xs">
-              Buscar
-            </button>
+        {/* Filtro */}
+        <div className="flex justify-start items-center mt-2">
+          <div className="relative">
+            <select className="appearance-none bg-white border border-slate-200 rounded-2xl px-10 py-3 text-xs font-medium text-slate-500 pr-10 cursor-pointer focus:outline-none shadow-xs">
+              <option value="">Filtrar por</option>
+              <option value="semana">Esta Semana</option>
+              <option value="mes">Este Mês</option>
+            </select>
+            <Filter className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5 pointer-events-none" />
+            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4 items-start">
-          <div className="flex flex-col gap-4">
-            <div className="w-full bg-[#DCE4FA] text-[#5F7DE3] font-bold text-center py-3 rounded-2xl text-sm shadow-xs">
-              + Acionados
-            </div>
-
-            <div className="flex flex-col gap-3">
-              {maisAcionados.map((item) => (
-                <div 
-                  key={item.id}
-                  className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-sky-400 via-indigo-300 to-pink-300 flex items-center justify-center text-lg shadow-xs">
-                      💥
-                    </div>
-                    <span className="font-bold text-slate-700 text-sm">{item.nome}</span>
-                  </div>
-
-                  <span className="text-[10px] font-semibold text-indigo-400 bg-indigo-50 px-2.5 py-1 rounded-lg">
-                    {item.detalhe}
-                  </span>
-                </div>
-              ))}
-            </div>
+        <div className="w-full bg-white border border-slate-100 rounded-3xl p-6 shadow-xs flex flex-col gap-6 mt-2 relative">
+          <div className="w-full h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                <XAxis 
+                  dataKey="name" 
+                  axisLine={{ stroke: '#F97316', strokeWidth: 3 }} 
+                  tickLine={false} 
+                  tick={{ fill: '#64748B', fontSize: 12, fontWeight: 600 }}
+                />
+                <YAxis 
+                  axisLine={{ stroke: '#F97316', strokeWidth: 3 }} 
+                  tickLine={false} 
+                  tick={{ fill: '#64748B', fontSize: 12, fontWeight: 600 }}
+                  domain={[0, 1000]}
+                  ticks={[0, 200, 400, 600, 800, 1000]}
+                />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#FFF', borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="valor" 
+                  stroke="#F97316" 
+                  strokeWidth={4} 
+                  dot={{ fill: '#F97316', r: 5, strokeWidth: 2, stroke: '#FFF' }}
+                  activeDot={{ r: 7 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
 
-          <div className="flex flex-col gap-4">
-            <div className="w-full bg-[#FDE8CE] text-[#E89234] font-bold text-center py-3 rounded-2xl text-sm shadow-xs">
-              - Acionados
-            </div>
-
-            <div className="flex flex-col gap-3">
-              {menosAcionados.map((item) => (
-                <div 
-                  key={item.id}
-                  className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-sky-400 via-indigo-300 to-pink-300 flex items-center justify-center text-lg shadow-xs">
-                      💥
-                    </div>
-                    <span className="font-bold text-slate-700 text-sm">{item.nome}</span>
-                  </div>
-
-                  <span className="text-[10px] font-semibold text-indigo-400 bg-indigo-50 px-2.5 py-1 rounded-lg">
-                    {item.detalhe}
-                  </span>
-                </div>
-              ))}
-            </div>
+          <div className="flex justify-end w-full">
+            <button className="flex items-center gap-2 px-6 py-3 bg-[#5F7DE3] hover:bg-[#4d6bd3] text-white text-xs font-semibold rounded-2xl transition-all shadow-md shadow-[#5F7DE3]/20 cursor-pointer">
+              <Download className="w-4 h-4" />
+              Gerar PDF
+            </button>
           </div>
         </div>
 
@@ -257,6 +237,7 @@ export default function Historico() {
             </div>
           </div>
         )}
+
       </main>
 
     </div>

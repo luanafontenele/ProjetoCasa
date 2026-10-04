@@ -1,18 +1,27 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans">
 
       <header className="w-full max-w-6xl mx-auto px-6 py-4 flex items-center justify-between bg-white/80 backdrop-blur-md rounded-2xl mt-4 shadow-sm border border-slate-100">
-        <div className="flex items-center gap-2">
-          {/* Espaço para o Logo C.A.S.A */}
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-            C
+        
+        {/* Logo C.A.S.A */}
+        <div className="flex items-center">
+          <div className="relative w-16 h-16 flex items-center justify-center shrink-0">
+            <Image 
+              src="/logo.png" 
+              alt="Logo C.A.S.A" 
+              width={64} 
+              height={64} 
+              className="object-contain"
+              priority 
+            />
           </div>
-          <span className="font-bold text-lg text-slate-900 tracking-wide">C.A.S.A</span>
         </div>
 
+        {/* Menu de Navegação */}
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
           <a href="#sobre" className="hover:text-blue-600 transition-colors">Sobre</a>
           <a href="#projeto" className="hover:text-blue-600 transition-colors">Projeto</a>
@@ -20,33 +29,42 @@ export default function Home() {
           <a href="#contato" className="hover:text-blue-600 transition-colors">Contato</a>
         </nav>
 
-        <div className="flex items-center gap-3">
+        {/* Grupo de Botões Juntos com os Links Corrigidos */}
+        <div className="flex items-center gap-2">
           <Link 
-            href="/dashboard"
-            className="px-5 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-md hover:shadow-lg shadow-blue-500/20"
+            href="/login"
+            className="px-4 py-2 text-sm font-semibold text-white bg-[#5F7DE3] hover:bg-[#4d6bd3] rounded-xl transition-all shadow-sm"
           >
             Entrar 
           </Link>
+
+          <Link 
+            href="/cadastro"
+            className="px-4 py-2 text-sm font-semibold text-white bg-[#5F7DE3] hover:bg-[#4d6bd3] rounded-xl transition-all shadow-sm"
+          >
+            Cadastrar 
+          </Link>
         </div>
+
       </header>
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-8 flex flex-col gap-16">
 
-          <section 
-            className="w-full h-80 rounded-3xl flex items-center justify-center shadow-lg relative overflow-hidden"
-            style={{
-              background: 'linear-gradient(90deg, #F5AC46 0%, #6586F3 52%, #4D66B8 88%, #3B4E8D 100%)'
-            }}
-          >
-            <div className="text-center text-white p-6">
-              <h1 className="text-3xl md:text-4xl font-extrabold mb-2 drop-shadow-sm">
-                Marketing / Banner Principal
-              </h1>
-              <p className="text-white/90 font-medium max-w-lg mx-auto drop-shadow-sm">
-                Espaço reservado para a chamada principal do sistema C.A.S.A.
-              </p>
-            </div>
-          </section>
+        <section 
+          className="w-full h-80 rounded-3xl flex items-center justify-center shadow-lg relative overflow-hidden"
+          style={{
+            background: 'linear-gradient(90deg, #F5AC46 0%, #6586F3 52%, #4D66B8 88%, #3B4E8D 100%)'
+          }}
+        >
+          <div className="text-center text-white p-6">
+            <h1 className="text-3xl md:text-4xl font-extrabold mb-2 drop-shadow-sm">
+              Marketing / Banner Principal
+            </h1>
+            <p className="text-white/90 font-medium max-w-lg mx-auto drop-shadow-sm">
+              Espaço reservado para a chamada principal do sistema C.A.S.A.
+            </p>
+          </div>
+        </section>
 
         <section id="sobre" className="flex flex-col items-center text-center gap-8 py-4">
           <h2 className="text-2xl font-bold text-slate-900">Sobre o Projeto</h2>
