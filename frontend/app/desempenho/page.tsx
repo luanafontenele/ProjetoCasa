@@ -14,7 +14,11 @@ import {
   X,
   Filter,
   Download,
-  ArrowLeft
+  RefreshCw,
+  PieChart,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle
 } from 'lucide-react';
 import Link from 'next/link';
 import { 
@@ -28,7 +32,15 @@ import {
 } from 'recharts';
 
 export default function Desempenho() {
+  const [temDados, setTemDados] = useState(true);
+  const [temNotificacoes, setTemNotificacoes] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
+
+  const [feedback, setFeedback] = useState<{
+    tipo: 'sucesso' | 'erro' | 'atencao' | null;
+    titulo: string;
+    mensagem: string;
+  }>({ tipo: null, titulo: '', mensagem: '' });
 
   const data = [
     { name: '0', valor: 200 },
@@ -41,10 +53,19 @@ export default function Desempenho() {
     { name: '14', valor: 320 },
   ];
 
+  const handleGerarPDF = () => {
+    setFeedback({
+      tipo: 'sucesso',
+      titulo: 'Relatório Gerado',
+      mensagem: 'O relatório de desempenho em PDF foi gerado e o download começará em instantes.'
+    });
+  };
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex font-sans relative">
       
-      <aside className="w-64 bg-white border-r border-slate-100 p-6 flex flex-col justify-between min-h-screen shadow-sm">
+      {/* SIDEBAR LATERAL */}
+      <aside className="w-64 bg-white border-r border-slate-100 p-6 flex flex-col justify-between min-h-screen shadow-sm shrink-0">
         <div className="flex flex-col gap-8">
           
           <div className="flex justify-center w-full px-2">
@@ -123,23 +144,41 @@ export default function Desempenho() {
         </div>
       </aside>
 
+      {/* CONTEÚDO PRINCIPAL */}
       <main className="flex-1 p-8 flex flex-col gap-6 max-w-5xl mx-auto relative">
         
-        <div className="flex justify-between items-center">
-          <Link 
-            href="/dashboard"
-            className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white border border-slate-100 text-slate-600 hover:text-[#5F7DE3] font-medium text-xs transition-all shadow-xs cursor-pointer"
-          >
-            <ArrowLeft className="w-4 h-4 text-[#5F7DE3]" />
-            <span>Voltar ao Dashboard</span>
-          </Link>
+        {/* BARRA SUPERIOR DE SIMULAÇÃO */}
+        <div className="flex justify-between items-center bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs">
+          <div className="flex items-center gap-3 text-xs text-slate-500">
+            <span className="font-bold text-slate-700 flex items-center gap-1">
+              <RefreshCw className="w-3.5 h-3.5 text-[#5F7DE3]" /> Simular Estado:
+            </span>
+            <button 
+              onClick={() => setTemDados(!temDados)}
+              className={`px-3 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+                temDados ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+              }`}
+            >
+              {temDados ? 'Com Relatórios' : 'Sem Relatórios'}
+            </button>
+            <button 
+              onClick={() => setTemNotificacoes(!temNotificacoes)}
+              className={`px-3 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+                temNotificacoes ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'
+              }`}
+            >
+              {temNotificacoes ? 'Com Notificações' : 'Sem Notificações'}
+            </button>
+          </div>
 
           <button 
             onClick={() => setShowNotifications(!showNotifications)}
-            className="p-2.5 rounded-2xl bg-white border border-slate-100 text-[#5F7DE3] hover:bg-slate-50 transition-all shadow-sm relative cursor-pointer"
+            className="p-2.5 rounded-2xl bg-slate-50 border border-slate-100 text-[#5F7DE3] hover:bg-slate-100 transition-all shadow-xs relative cursor-pointer"
           >
             <Bell className="w-5 h-5" />
-            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-amber-400"></span>
+            {temNotificacoes && (
+              <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-amber-400 border-2 border-white"></span>
+            )}
           </button>
         </div>
 
@@ -153,7 +192,7 @@ export default function Desempenho() {
         </section>
 
         <p className="text-center text-slate-400 text-xs max-w-md mx-auto leading-relaxed font-medium">
-          Desempenho Geral em relação aos botões mais e menos acionados pelo dispositivo
+          Desempenho Geral em relação aos botões mais e menos acionados pelo dispositivo.
         </p>
 
         {/* Filtro */}
@@ -169,47 +208,62 @@ export default function Desempenho() {
           </div>
         </div>
 
-        <div className="w-full bg-white border border-slate-100 rounded-3xl p-6 shadow-xs flex flex-col gap-6 mt-2 relative">
-          <div className="w-full h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
-                <XAxis 
-                  dataKey="name" 
-                  axisLine={{ stroke: '#F97316', strokeWidth: 3 }} 
-                  tickLine={false} 
-                  tick={{ fill: '#64748B', fontSize: 12, fontWeight: 600 }}
-                />
-                <YAxis 
-                  axisLine={{ stroke: '#F97316', strokeWidth: 3 }} 
-                  tickLine={false} 
-                  tick={{ fill: '#64748B', fontSize: 12, fontWeight: 600 }}
-                  domain={[0, 1000]}
-                  ticks={[0, 200, 400, 600, 800, 1000]}
-                />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#FFF', borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="valor" 
-                  stroke="#F97316" 
-                  strokeWidth={4} 
-                  dot={{ fill: '#F97316', r: 5, strokeWidth: 2, stroke: '#FFF' }}
-                  activeDot={{ r: 7 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+        {/* ÁREA DO GRÁFICO (COM DADOS / VAZIO) */}
+        {temDados ? (
+          <div className="w-full bg-white border border-slate-100 rounded-3xl p-6 shadow-xs flex flex-col gap-6 mt-2 relative">
+            <div className="w-full h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={{ stroke: '#F97316', strokeWidth: 3 }} 
+                    tickLine={false} 
+                    tick={{ fill: '#64748B', fontSize: 12, fontWeight: 600 }}
+                  />
+                  <YAxis 
+                    axisLine={{ stroke: '#F97316', strokeWidth: 3 }} 
+                    tickLine={false} 
+                    tick={{ fill: '#64748B', fontSize: 12, fontWeight: 600 }}
+                    domain={[0, 1000]}
+                    ticks={[0, 200, 400, 600, 800, 1000]}
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#FFF', borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="valor" 
+                    stroke="#F97316" 
+                    strokeWidth={4} 
+                    dot={{ fill: '#F97316', r: 5, strokeWidth: 2, stroke: '#FFF' }}
+                    activeDot={{ r: 7 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
 
-          <div className="flex justify-end w-full">
-            <button className="flex items-center gap-2 px-6 py-3 bg-[#5F7DE3] hover:bg-[#4d6bd3] text-white text-xs font-semibold rounded-2xl transition-all shadow-md shadow-[#5F7DE3]/20 cursor-pointer">
-              <Download className="w-4 h-4" />
-              Gerar PDF
-            </button>
+            <div className="flex justify-end w-full">
+              <button 
+                onClick={handleGerarPDF}
+                className="flex items-center gap-2 px-6 py-3 bg-[#5F7DE3] hover:bg-[#4d6bd3] text-white text-xs font-semibold rounded-2xl transition-all shadow-md shadow-[#5F7DE3]/20 cursor-pointer"
+              >
+                <Download className="w-4 h-4" />
+                Gerar PDF
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="bg-white border border-dashed border-slate-200 rounded-3xl p-12 text-center flex flex-col items-center justify-center gap-3 my-4">
+            <PieChart className="w-12 h-12 text-slate-300" />
+            <h3 className="font-bold text-slate-700 text-base">Sem Dados de Desempenho</h3>
+            <p className="text-xs text-slate-400 max-w-sm">
+              Inicie a utilização do dispositivo físico para gerar os primeiros gráficos de progresso e relatórios.
+            </p>
+          </div>
+        )}
 
+        {/* POP-UP DE NOTIFICAÇÕES */}
         {showNotifications && (
           <div className="absolute top-20 right-8 w-80 bg-[#F3EFF5] rounded-3xl p-6 shadow-2xl border border-indigo-100 z-50 animate-in fade-in zoom-in duration-200">
             <div className="flex justify-between items-center mb-6">
@@ -221,24 +275,62 @@ export default function Desempenho() {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="bg-white p-3.5 rounded-2xl shadow-sm flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 shrink-0" />
-                <span className="text-xs font-semibold text-slate-800">
-                  Dispositivo Conectado
-                </span>
+
+            {temNotificacoes ? (
+              <div className="flex flex-col gap-3">
+                <div className="bg-white p-3.5 rounded-2xl shadow-xs flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 shrink-0 flex items-center justify-center text-white text-xs font-bold">
+                      ESP
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-semibold text-slate-800">Dispositivo Conectado</span>
+                      <span className="text-[10px] text-slate-400">ESP32 sincronizado com sucesso</span>
+                    </div>
+                  </div>
+                  <span className="text-[10px] text-purple-500 font-medium">Agora</span>
+                </div>
               </div>
-              <span className="text-[10px] text-purple-500 font-medium">Agora</span>
-            </div>
-            <div className="text-center">
-              <button className="text-xs text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
-                Alterar
+            ) : (
+              <div className="bg-white/60 border border-slate-200/60 p-6 rounded-2xl text-center flex flex-col items-center gap-2">
+                <Bell className="w-8 h-8 text-slate-300" />
+                <span className="text-xs text-slate-500 font-medium">Nenhuma notificação por enquanto.</span>
+              </div>
+            )}
+
+            <div className="text-center mt-6">
+              <button 
+                onClick={() => setShowNotifications(false)}
+                className="text-xs text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+              >
+                Fechar
               </button>
             </div>
           </div>
         )}
 
       </main>
+
+      {/* MODAL FEEDBACK */}
+      {feedback.tipo && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-slate-100 text-center flex flex-col items-center gap-4">
+            {feedback.tipo === 'sucesso' && <CheckCircle2 className="w-12 h-12 text-emerald-500" />}
+            {feedback.tipo === 'erro' && <XCircle className="w-12 h-12 text-rose-500" />}
+            {feedback.tipo === 'atencao' && <AlertTriangle className="w-12 h-12 text-amber-500" />}
+            <div className="flex flex-col gap-1">
+              <h3 className="text-lg font-bold text-slate-800">{feedback.titulo}</h3>
+              <p className="text-xs text-slate-500">{feedback.mensagem}</p>
+            </div>
+            <button 
+              onClick={() => setFeedback({ tipo: null, titulo: '', mensagem: '' })} 
+              className="w-full py-3 rounded-2xl bg-[#5F7DE3] text-white font-semibold text-xs cursor-pointer"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );

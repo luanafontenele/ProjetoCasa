@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
@@ -23,36 +23,45 @@ export default function Home() {
   const [assunto, setAssunto] = useState('');
   const [mensagem, setMensagem] = useState('');
   const [enviado, setEnviado] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
+
+  // Identifica qual seção está visível na tela para sublinhar na Navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['sobre', 'projeto', 'equipe', 'contato'];
+      const scrollPosition = window.scrollY + 200;
+
+      for (const section of sections) {
+        const el = document.getElementById(section);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!nome || !email || !mensagem) return;
-    
     setEnviado(true);
   };
 
+  // INTEGRANTES EM ORDEM ALFABÉTICA (A -> Z)
   const primeiraLinha = [
-    {
-      nome: 'Luana',
-      cargo: 'Desenvolvedora Front-end',
-      foto: '/luana.jpeg',
-      inicial: 'L',
-    },
-    {
-      nome: 'Zeus',
-      cargo: 'Desenvolvedor Back-end e IoT',
-      foto: '/zeus.jpeg',
-      inicial: 'Z',
-    },
     {
       nome: 'Brenno',
       cargo: 'Desenvolvedor Back-end',
       foto: '/brenno.jpeg',
       inicial: 'B',
     },
-  ];
-
-  const segundaLinha = [
     {
       nome: 'Eduarda',
       cargo: 'Desenvolvedora Front-end e UI/UX Designer',
@@ -67,11 +76,35 @@ export default function Home() {
     },
   ];
 
+  const segundaLinha = [
+    {
+      nome: 'Luana',
+      cargo: 'Desenvolvedora Front-end',
+      foto: '/luana.jpeg',
+      inicial: 'L',
+    },
+    {
+      nome: 'Zeus',
+      cargo: 'Desenvolvedor Back-end e IoT',
+      foto: '/zeus.jpeg',
+      inicial: 'Z',
+    },
+  ];
+
+  const navLinks = [
+    { href: '#sobre', label: 'Sobre', id: 'sobre' },
+    { href: '#projeto', label: 'Projeto', id: 'projeto' },
+    { href: '#equipe', label: 'Equipe', id: 'equipe' },
+    { href: '#contato', label: 'Contato', id: 'contato' },
+  ];
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans">
 
-      <header className="w-full max-w-6xl mx-auto px-6 py-4 flex items-center justify-between bg-white/80 backdrop-blur-md rounded-2xl mt-4 shadow-sm border border-slate-100">
+      {/* HEADER / NAV BAR */}
+      <header className="sticky top-4 z-50 w-full max-w-6xl mx-auto px-6 py-4 flex items-center justify-between bg-white/80 backdrop-blur-md rounded-2xl shadow-sm border border-slate-100">
         
+        {/* Logo C.A.S.A */}
         <div className="flex items-center">
           <div className="relative w-16 h-16 flex items-center justify-center shrink-0">
             <Image 
@@ -85,13 +118,28 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Menu de Navegação com Sublinhado Ativo */}
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
-          <a href="#sobre" className="hover:text-[#5F7DE3] transition-colors">Sobre</a>
-          <a href="#projeto" className="hover:text-[#5F7DE3] transition-colors">Projeto</a>
-          <a href="#equipe" className="hover:text-[#5F7DE3] transition-colors">Equipe</a>
-          <a href="#contato" className="hover:text-[#5F7DE3] transition-colors">Contato</a>
+          {navLinks.map((link) => {
+            const isActive = activeSection === link.id;
+            return (
+              <a 
+                key={link.id} 
+                href={link.href} 
+                className={`relative py-1 transition-colors hover:text-[#5F7DE3] ${
+                  isActive ? 'text-[#5F7DE3] font-bold' : ''
+                }`}
+              >
+                {link.label}
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 w-full h-[2.5px] bg-[#5F7DE3] rounded-full transition-all duration-300" />
+                )}
+              </a>
+            );
+          })}
         </nav>
 
+        {/* Grupo de Botões */}
         <div className="flex items-center gap-2">
           <Link 
             href="/login"
@@ -112,8 +160,9 @@ export default function Home() {
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-8 flex flex-col gap-16">
 
+        {/* BANNER HERO */}
         <section 
-          className="w-full h-80 rounded-3xl flex items-center justify-center shadow-lg relative overflow-hidden"
+          className="w-full h-80 rounded-3xl flex items-center justify-center shadow-lg relative overflow-hidden mt-2"
           style={{
             background: 'linear-gradient(90deg, #F5AC46 0%, #6586F3 52%, #4D66B8 88%, #3B4E8D 100%)'
           }}
@@ -128,7 +177,8 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="sobre" className="flex flex-col items-center text-center gap-10 py-4">
+        {/* SEÇÃO SOBRE O PROJETO COM CARDS E TEXTO JUSTIFICADO */}
+        <section id="sobre" className="flex flex-col items-center text-center gap-10 py-4 scroll-mt-28">
           <div className="flex flex-col gap-2 max-w-xl mx-auto">
             <h2 className="text-3xl font-bold text-slate-900">Sobre o Projeto</h2>
             <p className="text-xs text-slate-400 font-medium leading-relaxed">
@@ -136,6 +186,7 @@ export default function Home() {
             </p>
           </div>
           
+          {/* Cards de Recursos e Diferenciais */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
             
             <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm flex flex-col items-center text-center gap-4 hover:border-[#5F7DE3]/50 hover:shadow-md transition-all group">
@@ -182,12 +233,13 @@ export default function Home() {
 
           </div>
 
+          {/* Texto descritivo com ALINHAMENTO JUSTIFICADO (text-justify) */}
           <div className="w-full bg-[#FAF8FC] border border-purple-100/80 rounded-3xl p-6 sm:p-10 text-left shadow-xs flex flex-col gap-4">
             <h3 className="text-xl font-extrabold text-slate-800 flex items-center gap-2.5">
               <span className="w-3 h-3 rounded-full bg-[#5F7DE3]"></span>
               O que é o Projeto C.A.S.A.?
             </h3>
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal text-justify">
               O <strong>C.A.S.A. (Comunicação Alternativa para Suporte à Autistas)</strong> é um ecossistema de tecnologia assistiva desenvolvido para mitigar barreiras na comunicação e interação social de crianças no espectro autista. Integrando um dispositivo físico inteligente com conectividade sem fio a uma plataforma web e móvel, o sistema possibilita que responsáveis e educadores personalizem a prancha de comunicação com pictogramas, categorias de rotina e mensagens de áudio gravadas com a própria voz da família. Ao pressionar um botão, a criança recebe feedback multissensorial simultâneo (imagem, som e vibração), auxiliando na autoexpressão, prevenindo frustrações e promovendo a autonomia cotidiana.
             </p>
           </div>
@@ -195,7 +247,8 @@ export default function Home() {
 
         <hr className="border-slate-200" />
 
-        <section id="projeto" className="flex flex-col items-center text-center gap-8">
+        {/* SEÇÃO DO PROJETO COM IMAGENS */}
+        <section id="projeto" className="flex flex-col items-center text-center gap-8 scroll-mt-28">
           <div className="flex flex-col gap-2 max-w-xl mx-auto">
             <h2 className="text-3xl font-bold text-slate-900">Visão Geral do Sistema</h2>
             <p className="text-xs text-slate-400 font-medium leading-relaxed">
@@ -255,11 +308,12 @@ export default function Home() {
 
         <hr className="border-slate-200" />
 
-        <section id="equipe" className="flex flex-col items-center text-center gap-8">
+        {/* SEÇÃO DA EQUIPE (A -> Z) */}
+        <section id="equipe" className="flex flex-col items-center text-center gap-8 scroll-mt-28">
           <h2 className="text-2xl font-bold text-slate-900">Equipe</h2>
           
           <div className="flex flex-col gap-6 w-full max-w-4xl">
- 
+            {/* Primeira Linha (Brenno, Eduarda, Ellen) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
               {primeiraLinha.map((membro) => (
                 <div 
@@ -287,6 +341,7 @@ export default function Home() {
               ))}
             </div>
 
+            {/* Segunda Linha (Luana, Zeus) */}
             <div className="flex flex-col md:flex-row justify-center gap-6 w-full">
               {segundaLinha.map((membro) => (
                 <div 
@@ -318,7 +373,8 @@ export default function Home() {
 
         <hr className="border-slate-200" />
 
-        <section id="contato" className="flex flex-col items-center text-center gap-8 pb-8">
+        {/* SEÇÃO DE CONTATO */}
+        <section id="contato" className="flex flex-col items-center text-center gap-8 pb-8 scroll-mt-28">
           <div className="flex flex-col gap-2 max-w-md mx-auto">
             <h2 className="text-3xl font-extrabold text-slate-900">Fale Conosco</h2>
             <p className="text-xs text-slate-400 font-medium leading-relaxed">
@@ -428,6 +484,7 @@ export default function Home() {
 
       </main>
 
+      {/* FOOTER COMPLETO E ESTILIZADO */}
       <footer className="w-full bg-white border-t border-slate-200 mt-12 py-12 text-slate-600">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
           
